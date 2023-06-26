@@ -175,9 +175,15 @@ variable "vbox_source" {
 }
 
 # vmware-iso
+variable "vmware_cdrom_adapter_type" {
+  type        = string
+  default     = "sata"
+  description = "CDROM adapter type.  Needs to be SATA (or non-SCSI) for ARM64 builds."
+}
 variable "vmware_disk_adapter_type" {
-  type    = string
-  default = null
+  type        = string
+  default     = "sata"
+  description = "Disk adapter type.  Needs to be SATA (PVSCSI, or non-SCSI) for ARM64 builds."
 }
 variable "vmware_guest_os_type" {
   type        = string
@@ -206,6 +212,18 @@ variable "vmware_vmx_data" {
 variable "vmware_vmx_remove_ethernet_interfaces" {
   type    = bool
   default = true
+}
+variable "vmware_enable_usb" {
+  type    = bool
+  default = true
+}
+variable "vmware_network_adapter_type" {
+  type    = string
+  default = "e1000e"
+}
+variable "vmware_network" {
+  type    = string
+  default = "nat"
 }
 
 # Source block common variables

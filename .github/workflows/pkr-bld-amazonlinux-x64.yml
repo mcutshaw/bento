@@ -1,41 +1,40 @@
 ---
 on:
   workflow_call:
-    secrets:
-      PACKER_GITHUB_API_TOKEN:
-        required: true
 
 jobs:
   x86_64:
     runs-on: [self-hosted, X64, virtualbox]
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - amazonlinux-2
     steps:
       - name: Checkout
         uses: actions/checkout@main
-      - name: Pull Change list
-        id: changed-files
-        uses: collin-miller/git-changesets@master
-      - name: Verify Changed files
-        id: verify-changed-files
-        run: |
-          echo '${{ steps.changed-files.outputs.added_modified }}' > changed.txt
-          if grep ".*\.pkrvars.hcl" changed.txt; then
-            echo "files_changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "files_changed=false" >> $GITHUB_OUTPUT
-          fi
-      - name: Setup Packer
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
-        uses: hashicorp/setup-packer@main
-        with:
-          version: latest
+#      - name: Setup Packer
+#        uses: hashicorp/setup-packer@main
+#        with:
+#          version: latest
       - name: Packer Init
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
         env:
-          PACKER_GITHUB_API_TOKEN: "${{ secrets.PACKER_GITHUB_API_TOKEN }}"
+          PACKER_GITHUB_API_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: packer init -upgrade packer_templates
+      - name: Packer FMT
+        run: if packer fmt -check -recursive .; then exit 0; else echo "Some packer files need to be formatted, run 'packer fmt -recursive .' to fix"; exit 1; fi
+      - name: Packer Validate
+        run: packer validate -var-file=os_pkrvars/$(echo ${{ matrix.os }} | cut -d "-" -f 1)/"${{ matrix.os }}-x86_64.pkrvars.hcl" packer_templates
       - name: Packer build
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: ./AMZ_build_virtualbox-ovf.sh
+      - name: Remove VM in case of canceled job
+        if: cancelled()
+        run: |
+          echo Powering off and deleting any existing VMs named AmazonLinuxBento
+          VBoxManage controlvm AmazonLinuxBento poweroff --type headless 2> /dev/null
+          sleep 1
+          VBoxManage unregistervm AmazonLinuxBento --delete 2> /dev/null
+          sleep 2
       - name: Upload build artifact
         uses: actions/upload-artifact@main
         with:

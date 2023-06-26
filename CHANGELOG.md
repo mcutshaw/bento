@@ -8,28 +8,29 @@ Markdown table generated at <https://www.tablesgenerator.com/markdown_tables#>
 |  | hyperv<br>x86_64 | parallels<br>x86_64 | parallels<br>aarch64 | qemu<br>x86_64 | qemu<br>aarch64 | virtualbox<br>x86_64 | virtualbox<br>aarch64 | vmware<br>x86_64 | vmware<br>aarch64 |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | almalinux-8 |  | x |  | x |  | x |  | x |  |
-| almalinux-9 |  | x |  |  |  | x |  | x |  |
+| almalinux-9 |  | x | x |  |  | x |  | x |  |
 | amazonlinux-2 |  | na | na | na | na | x |  | na | na |
-| amazonlinux-2022 | na | na | na | na | na | na | na | na | na |
+| amazonlinux-2023 | na | na | na | na | na | na | na | na | na |
 | centos-7 |  | x |  | x |  | x |  | x |  |
 | centos-stream-8 |  | x |  | x |  | x |  | x |  |
 | centos-stream-9 |  |  |  |  |  | x |  | x |  |
-| debian-10 |  |  |  |  |  | x |  | x |  |
-| debian-11 |  | x |  |  |  | x |  | x |  |
-| fedora-36 |  | x |  | x |  | x |  | x |  |
-| fedora-37 |  | x |  | x |  | x |  | x |  |
+| debian-10 | | | x | | | x | | x | |
+| debian-11 |  | x | x |  |  | x |  | x |  |
+| debian-12 |  | x | x |  |  | x |  | x |  |
+| fedora-37 |  | x | x | x |  | x |  | x |  |
+| fedora-38 |  | x |  | x |  | x |  | x |  |
 | freebsd-12 |  |  | na |  | na | x | na |  | na |
 | freebsd-13 |  |  | na |  | na | x | na |  | na |
-| opensuse-leap-15 |  |  | na |  | na |  | na | x | na |
-| oraclelinux-7 |  | x |  | x |  | x |  | x |  |
-| oraclelinux-8 |  |  |  | x |  | x |  | x |  |
-| oraclelinux-9 |  | x |  |  |  | x |  | x |  |
+| opensuse-leap-15 |  |  | na | x | na |  | na | x | na |
+| oracle-7 |  | x |  | x |  | x |  | x |  |
+| oracle-8 |  |  |  | x |  | x |  | x |  |
+| oracle-9 |  | x | x |  |  | x |  | x |  |
 | rhel-7 |  |  |  |  |  |  |  |  |  |
 | rhel-8 |  |  |  |  |  |  |  |  |  |
 | rhel-9 |  |  |  |  |  |  |  |  |  |
 | rockylinux-8 |  | x |  | x |  | x |  | x |  |
-| rockylinux-9 |  | x |  |  |  | x |  | x |  |
-| scientificlinux-7 |  | x | na |  | na | x | na | x | na |
+| rockylinux-9 |  | x | x |  |  | x |  | x |  |
+| scientificlinux-7 |  | x | na | x | na | x | na | x | na |
 | sles-12 |  |  | na |  | na |  | na |  | na |
 | sles-13 |  |  | na |  | na |  | na |  | na |
 | solaris-11 |  |  | na |  | na |  | na |  | na |
@@ -37,9 +38,9 @@ Markdown table generated at <https://www.tablesgenerator.com/markdown_tables#>
 | springdalelinux-8 |  | x | na | x | na | x | na | x | na |
 | springdalelinux-9 |  | x | na |  | na | x | na | x | na |
 | ubuntu-18.04 |  | x |  |  |  | x |  | x |  |
-| ubuntu-20.04 |  |  |  |  |  |  |  |  |  |
-| ubuntu-22.04 |  | x |  | x |  | x |  |  |  |
-| ubuntu-22.10 |  | x |  | x |  | x |  | x |  |
+| ubuntu-20.04 |  |  | x |  |  |  |  |  |  |
+| ubuntu-22.04 |  | x | x | x |  | x |  | x |  |
+| ubuntu-22.10 |  | x | x | x |  | x |  | x |  |
 | ubuntu-23.04 | na | na | na | na | na | na | na | na | na |
 | windows-10 | x | x | na |  | na | x | na |  | na |
 | windows-10gen2 |  | na | na | na | na | na | na | na | na |
@@ -50,7 +51,67 @@ Markdown table generated at <https://www.tablesgenerator.com/markdown_tables#>
 | windows-2019 | x | x | na |  | na | x | na |  | na |
 | windows-2022 | x | x | na |  | na | x | na |  | na |
 
-## [unreleased] (2023-02-22)
+### Todo
+
+- Fix failing builds
+- Finish removal of deprecated chef-solo provider to powershell provider for windows
+- migrate from http directory for hosting files to cd_files in source templates
+  - This makes all builds compatible with hyper-v gen 2 which removes floppy disk capability
+  - This also makes things universal for Virtualbox 6.1 to 7.x due to latter requiring extra config for guests on NAT to be able to connect to host
+- Update pipelines to only run on updated pkrvars files
+- Look into making all build uefi default builds
+- Create CD pipeline to upload vagrant boxes after PR is merged
+- Create CD pipeline to build and upload new versions of vagrant boxes once every 3 months with the latest patches
+
+## [unreleased] (2023-06-15)
+
+- Update RHEL 9 clones to 9.2
+- Update RHEL 8 clones to 8.8
+- Added Debian 12 variables
+- Fixed pipeline issue with plugins
+
+## [v3.1.0] (2023-05-17)
+
+- Updated VMware disk and cdrom adaptor type to sata for aarch64 build compatability
+- Added "arm-" to aarch64 pkrvars files vmware_guest_os_type
+- Fixed readme example for bento debian build
+- Added pkrvars file for amazon 2023, more work needed to build vagrant box if/when amazon releases images for providers
+- Removed EOL Fedora 36 build
+- Added Fedora 38 build
+- Added Ubuntu 23.04 x86_64 and aarch64
+- Switched vmware plugin back to official one with fusion 13 arm64 guest additions fix
+- Updated Bento app to support arm64 builds and upload to vagrant
+- Added Freebsd aarch64 templates
+- Added new default VMware hardware configuration settings
+- Update Debian 11 to 11.7
+
+## [v3.0.0] (2023-03-16)
+
+- fixed pipeline secrets issue for github api requests and secrets not working for forked repos
+- add back the bento ruby code and updated it to work with hcl2 templates, Json templates are no longer supported
+- made bento builds for all templates configurable through the builds.yml file on which OSes to skip
+
+## [v202303.06] (2023-03-07)
+
+- Added a cleanup step in build pipelines for cancelled jobs that otherwise leave vm in place
+
+## [v202303.05.0] (2023-03-05)
+
+### Fixes and updates
+
+- added aarch64 builds and runner
+
+### Todo
+
+- Fix failing builds
+- Finish removal of deprecated chef-solo provider to powershell provider for windows
+- migrate from http directory for hosting files to cd_files in source templates
+  - This makes all builds compatable with hyper-v gen 2 which removes floppy disk capability
+  - This also makes things universal for Virtualbox 6.1 to 7.x due to latter requiring extra config for guests on NAT to be able to connect to host
+- Update pipelines to only run on updated pkrvars files
+- Look into making all build uefi default builds
+- Create CD pipeline to upload vagrant boxes after PR is merged
+- Create CD pipeline to build and upload new versions of vagrant boxes once every 3 months with the latest patches
 
 ## [v202302.22.0]  (2023-02-22)
 
